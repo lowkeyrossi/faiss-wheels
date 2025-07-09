@@ -43,7 +43,10 @@ def win32_options(
     swig_opts: List[str],
 ) -> dict:
     """Windows options."""
-    default_link_args = ["faiss.lib", "openblas.lib"]
+    default_link_args = [
+    "C:\\a\\faiss-wheels\\faiss-wheels\\faiss\\build\\faiss\\Release\\faiss.lib",
+    "C:\\opt\\OpenBLAS\\lib\\openblas.lib"
+    ]
     return dict(
         extra_compile_args=extra_compile_args
         + [
