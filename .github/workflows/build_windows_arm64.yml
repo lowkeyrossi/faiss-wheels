@@ -68,7 +68,7 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_ENVIRONMENT_WINDOWS: >
-            FAISS_OPT_LEVEL=${{ matrix.opt_level }}
+            FAISS_OPT_LEVEL=generic
             CMAKE_PREFIX_PATH="c:\\opt\\OpenBLAS"
             LIB="${LIB};${CMAKE_PREFIX_PATH}\\lib;${CMAKE_PREFIX_PATH}\\lib\\bin"
             CPATH="${CPATH};${CMAKE_PREFIX_PATH}\\include\\openblas"
