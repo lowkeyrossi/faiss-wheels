@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [release]
+    branches: [Faiss_CPU]
 
 jobs:
   build_sdist:
