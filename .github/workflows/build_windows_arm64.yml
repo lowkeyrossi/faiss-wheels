@@ -70,8 +70,9 @@ jobs:
           CIBW_ENVIRONMENT_WINDOWS: >
             FAISS_OPT_LEVEL=generic
             CMAKE_PREFIX_PATH="c:\\opt\\OpenBLAS"
-            LIB="${LIB};${CMAKE_PREFIX_PATH}\\lib;${CMAKE_PREFIX_PATH}\\lib\\bin"
+            LIB="${LIB};${CMAKE_PREFIX_PATH}\\lib;${CMAKE_PREFIX_PATH}\\bin"
             CPATH="${CPATH};${CMAKE_PREFIX_PATH}\\include\\openblas"
+            PATH="${PATH};${CMAKE_PREFIX_PATH}\\bin"
           CIBW_SKIP: "cp38-* cp39-win_arm64 cp310-win_arm64"
           CIBW_BEFORE_ALL: bash scripts/build_Windows_ARM64.sh
           CIBW_TEST_COMMAND: >
