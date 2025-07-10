@@ -44,8 +44,8 @@ def win32_options(
 ) -> dict:
     """Windows options."""
     default_link_args = [
-        "C:/faiss-wheels/faiss/build/faiss/Release/faiss.lib", 
-        "C:/opt/lib/openblas.lib"
+        "faiss.lib", 
+        "openblas.lib"
     ]
     arch = platform.machine().lower()
     is_arm64 = arch in ('arm64', 'aarch64')
