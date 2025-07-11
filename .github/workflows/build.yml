@@ -100,9 +100,10 @@ jobs:
             MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_ENVIRONMENT_WINDOWS: >
             FAISS_OPT_LEVEL=${{ matrix.opt_level }}
-            CMAKE_PREFIX_PATH="c:\\opt\\OpenBLAS"
+            CMAKE_PREFIX_PATH="${{ matrix.arch == 'auto64' && 'c:\\opt' || 'c:\\opt\\OpenBLAS' }}"
             LIB="${LIB};${CMAKE_PREFIX_PATH}\\lib;${CONDA}\\Library\\lib"
             CPATH="${CPATH};${CMAKE_PREFIX_PATH}\\include;${CONDA}\\Library\\include"
+            PATH="${PATH};${CMAKE_PREFIX_PATH}\\bin"
           CIBW_BEFORE_ALL: bash scripts/build_${{ runner.os }}.sh
           CIBW_SKIP: ${{ matrix.arch == 'ARM64' && 'cp38-* cp39-win_arm64 cp310-win_arm64' || '' }}
           CIBW_TEST_COMMAND: ${{ matrix.arch == 'ARM64' && '' || 'env -u FAISS_OPT_LEVEL pytest {project}/faiss/tests' }}
