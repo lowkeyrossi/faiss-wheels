@@ -3,12 +3,14 @@
 set -eux
 
 CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-"c:\\opt"}
-#Function to install OpenBLAS on X64/ARM64 Windows systems
+
+# Function to install OpenBLAS
 install_openblas() {
     local arch=$1
     local version="0.3.30"
     local url=""
     local zip_name=""
+    
     case $arch in
         "x86_64"|"auto64")
             url="https://github.com/OpenMathLib/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}-x64.zip"
@@ -22,9 +24,11 @@ install_openblas() {
             return 1
             ;;
     esac
+    
+    # Use PowerShell to download and extract OpenBLAS
     powershell -Command "
         \$url = '$url'
-        \$zipPath = '\$env:RUNNER_TEMP\\$zip_name'
+        \$zipPath = \$env:RUNNER_TEMP + '\\$zip_name'
         \$destPath = '$CMAKE_PREFIX_PATH'
         
         Invoke-WebRequest -Uri \$url -OutFile \$zipPath
@@ -32,7 +36,8 @@ install_openblas() {
         Expand-Archive -Path \$zipPath -DestinationPath \$destPath -Force
     "
 }
-#Detect Architecture for install OpenBLAS
+
+# Detect architecture
 if [ -n "${CIBW_ARCHS:-}" ]; then
     ARCH="$CIBW_ARCHS"
 else
@@ -41,8 +46,11 @@ else
         ARCH="auto64"
     fi
 fi
+
+# Install OpenBLAS
 install_openblas "$ARCH"
-#Set right generator for CMake
+
+# Set CMAKE_GENERATOR based on architecture
 CMAKE_GENERATOR=""
 if [ "$ARCH" = "ARM64" ]; then
     CMAKE_GENERATOR="-A ARM64"
