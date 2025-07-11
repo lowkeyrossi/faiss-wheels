@@ -50,15 +50,23 @@ install_openblas() {
 # Install OpenBLAS
 install_openblas "$ARCH"
 
-# Find the actual OpenBLAS directory (it might be nested)
+# Find the actual OpenBLAS directory and library file
 OPENBLAS_ACTUAL_PATH=$(powershell -Command "
     \$searchPath = '$OPENBLAS_ROOT'
-    \$openblasLib = Get-ChildItem -Path \$searchPath -Recurse -Name 'openblas.lib' | Select-Object -First 1
-    if (\$openblasLib) {
-        \$libDir = Split-Path -Path (Join-Path \$searchPath \$openblasLib) -Parent
-        \$rootDir = Split-Path -Path \$libDir -Parent
-        Write-Output \$rootDir
-    } else {
+    # Try different library names used by OpenBLAS
+    \$libNames = @('openblas.lib', 'libopenblas.lib', 'libopenblas.dll.a')
+    \$foundLib = ''
+    foreach (\$libName in \$libNames) {
+        \$openblasLib = Get-ChildItem -Path \$searchPath -Recurse -Name \$libName | Select-Object -First 1
+        if (\$openblasLib) {
+            \$foundLib = \$libName
+            \$libDir = Split-Path -Path (Join-Path \$searchPath \$openblasLib) -Parent
+            \$rootDir = Split-Path -Path \$libDir -Parent
+            Write-Output \$rootDir
+            break
+        }
+    }
+    if (-not \$foundLib) {
         Write-Output ''
     }
 ")
@@ -68,9 +76,21 @@ if [ -z "$OPENBLAS_ACTUAL_PATH" ]; then
     exit 1
 fi
 
-echo "OpenBLAS found at: $OPENBLAS_ACTUAL_PATH"
+# Find the actual library file path
+OPENBLAS_LIB_PATH=$(powershell -Command "
+    \$searchPath = '$OPENBLAS_ACTUAL_PATH'
+    \$libNames = @('openblas.lib', 'libopenblas.lib')
+    foreach (\$libName in \$libNames) {
+        \$libFile = Get-ChildItem -Path \$searchPath -Recurse -Name \$libName | Select-Object -First 1
+        if (\$libFile) {
+            Write-Output (Join-Path \$searchPath \$libFile)
+            break
+        }
+    }
+")
 
-# Set environment variables for CMake
+echo "OpenBLAS found at: $OPENBLAS_ACTUAL_PATH"
+echo "OpenBLAS library: $OPENBLAS_LIB_PATH"
 export CMAKE_PREFIX_PATH="$OPENBLAS_ACTUAL_PATH"
 export OpenBLAS_ROOT="$OPENBLAS_ACTUAL_PATH"
 export BLAS_ROOT="$OPENBLAS_ACTUAL_PATH"
@@ -95,7 +115,7 @@ cd faiss && \
         -DCMAKE_BUILD_TYPE=Release \
         -DBLA_STATIC=ON \
         -DFAISS_ENABLE_OPENMP=OFF \
-        -DBLAS_LIBRARIES="${OPENBLAS_ACTUAL_PATH}/lib/openblas.lib" \
+        -DBLAS_LIBRARIES="${OPENBLAS_LIB_PATH}" \
         -DBLAS_INCLUDE_DIRS="${OPENBLAS_ACTUAL_PATH}/include" && \
     cmake --build build --config Release -j && \
     cmake --install build --prefix "${OPENBLAS_ACTUAL_PATH}" && \
