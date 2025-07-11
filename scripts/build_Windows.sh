@@ -7,17 +7,16 @@ CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-"c:\\opt"}
 # Function to install OpenBLAS
 install_openblas() {
     local arch=$1
-    local version="0.3.30"
     local url=""
     local zip_name=""
     
     case $arch in
         "x86_64"|"auto64")
-            url="https://github.com/OpenMathLib/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}-x64.zip"
+            url="https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.30/OpenBLAS-0.3.30-x64.zip"
             zip_name="OpenBLAS-x64.zip"
             ;;
         "ARM64")
-            url="https://github.com/OpenMathLib/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}-woa64-dll.zip"
+            url="https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.30/OpenBLAS-0.3.30-woa64-dll.zip"
             zip_name="OpenBLAS-ARM64.zip"
             ;;
         *)
