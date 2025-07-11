@@ -14,7 +14,7 @@ fi
 
 # Set CMAKE_PREFIX_PATH based on arch
 if [ "$ARCH" = "ARM64" ]; then
-    CMAKE_PREFIX_PATH="c:\\opt\\OpenBLAS"
+    CMAKE_PREFIX_PATH="c:\\opt\\OpenBLAS\\OpenBLAS"
 else
     CMAKE_PREFIX_PATH="c:\\opt"
 fi
